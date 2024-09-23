@@ -3,11 +3,13 @@ import RestaurantCard from "./RestaurantCard";
 import Shimmer from "./Shimmer";
 
 import { useEffect, useState } from "react";
+import useOnlineStatus from "../utils/useOnlineStatus";
 
 const Body = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [restaurantList, setRestaurantList] = useState([]);
   const [inputText, setInputText] = useState("");
+  const onlineStatus = useOnlineStatus();
 
   const filterTopRated = () => {
     setRestaurantList(
@@ -43,6 +45,9 @@ const Body = () => {
       json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
   };
+  if (onlineStatus == "offline") {
+    return <h1>Please check your internet connection!</h1>;
+  }
 
   if (restaurants.length === 0) {
     return <Shimmer />;
