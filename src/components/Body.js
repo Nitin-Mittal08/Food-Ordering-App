@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import RestaurantCard from "./RestaurantCard";
+import RestaurantCard, { withPromotedLabel } from "./RestaurantCard";
 import Shimmer from "./Shimmer";
 
 import { useEffect, useState } from "react";
 import useOnlineStatus from "../utils/useOnlineStatus";
+
+const RestaurantCardPromoted = withPromotedLabel(RestaurantCard);
 
 const Body = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -44,6 +46,8 @@ const Body = () => {
     setRestaurantList(
       json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
+
+    console.log(restaurants);
   };
   if (onlineStatus == "offline") {
     return <h1>Please check your internet connection!</h1>;
@@ -55,28 +59,40 @@ const Body = () => {
   return (
     <div className="body">
       <div className="filter">
-        <div className="search">
+        <div className="search p-4 m-4">
           <input
             type="text"
-            className="search-box"
+            className="border border-solid border-black"
             onChange={(event) => setInputText(event.target.value)}
           ></input>
-          <button className="search-btn" onClick={handleSearch}>
+          <button
+            className="px-4 py-1 rounded mx-2 bg-orange-400"
+            onClick={handleSearch}
+          >
             Search
           </button>
         </div>
-        <button className="filter-btn" onClick={filterTopRated}>
-          Top Rated
-        </button>
+        <div className="p-4 m-4 search">
+          <button
+            className="px-4 py-1 rounded mx-2 bg-orange-400"
+            onClick={filterTopRated}
+          >
+            Top Rated
+          </button>
+        </div>
       </div>
-      <div className="res-container">
+      <div className="res-container flex flex-wrap">
         {restaurantList.map((restaurant) => (
           <Link
             key={restaurant.info.id}
             to={"/restaurants/" + restaurant.info.id}
           >
             {" "}
-            <RestaurantCard resData={restaurant} />
+            {restaurant.info.avgRating > 4.3 ? (
+              <RestaurantCardPromoted resData={restaurant} />
+            ) : (
+              <RestaurantCard resData={restaurant} />
+            )}
           </Link>
         ))}
       </div>
